@@ -1,0 +1,8 @@
+1.找到他的 pid
+[root@Redis02 sh]# ps -ef | grep kibana
+root     27035 19887  0 17:17 pts/9    00:00:18 /data/application/kibana/bin/../node/bin/node --no-warnings /data/application/kibana/bin/../src/cli
+root     29798 19887  0 18:27 pts/9    00:00:00 grep --color=auto kibana
+
+2. 通过pid 查找他的 端口号
+[root@Redis02 sh]# ss -antulp | grep 27035
+tcp    LISTEN     0      128    10.8.0.212:5601                  *:*                   users:(("node",pid=27035,fd=9))

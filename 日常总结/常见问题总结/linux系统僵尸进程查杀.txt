@@ -1,0 +1,6 @@
+ps -A -o stat,ppid,pid,cmd | grep -e '^[Zz]' | awk '{print "kill -9",$2}' | bash
+
+
+
+
+kill -9 杀不死的进程， 只能重启！！！

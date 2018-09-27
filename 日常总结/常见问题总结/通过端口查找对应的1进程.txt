@@ -1,0 +1,45 @@
+参考：http://guoruisheng-163-com.iteye.com/blog/546166
+
+
+系统入侵排查
+https://mp.weixin.qq.com/s/G7As8agcD1f_MTcSyoKW5Q
+
+
+
+1.先通过 端口查找进程 pid
+[root@Tomcat-Micro ~]# lsof -i:7071
+COMMAND  PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+java    3620 root   27u  IPv4  86546      0t0  TCP *:iwg1 (LISTEN)
+java    3620 root   37u  IPv4  94350      0t0  TCP Tomcat-Micro:iwg1->10.8.0.104:31723 (ESTABLISHED)
+java    3620 root   38u  IPv4  94351      0t0  TCP Tomcat-Micro:iwg1->10.8.0.104:31724 (ESTABLISHED)
+java    3620 root   40u  IPv4  94352      0t0  TCP Tomcat-Micro:iwg1->10.8.0.104:31725 (ESTABLISHED)
+java    3620 root   41u  IPv4  94353      0t0  TCP Tomcat-Micro:iwg1->10.8.0.104:31726 (ESTABLISHED)
+java    3620 root   43u  IPv4  94355      0t0  TCP Tomcat-Micro:iwg1->10.8.0.104:31750 (ESTABLISHED)
+java    3620 root   47u  IPv4  94326      0t0  TCP Tomcat-Micro:iwg1->10.8.0.104:31722 (ESTABLISHED)
+[root@Tomcat-Micro ~]# 
+
+
+2.通过 PID 查找对应的进程
+[root@Tomcat-Micro ~]# ps aux | grep 3620
+root      3620  9.5  7.5 13548352 2470192 pts/0 Sl  19:14   1:19 java -jar pecoo-service-user.jar
+root      3744  0.0  0.0 112660   968 pts/4    S+   19:28   0:00 grep --color=auto 3620
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

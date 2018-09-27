@@ -1,0 +1,4 @@
+tar zcvf /data/software/back_code/pecoo-admin-bms_`date +%Y-%m-%d-%T`.tar.gz ./*
+
+
+%T 参数用法
