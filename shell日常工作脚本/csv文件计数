@@ -1,0 +1,72 @@
+if [ $# != 2 ];then
+        ##使用方式 : lzr.sh 查找路径 分隔符
+        echo "usage : $0 file_path field_split_flag"
+        exit 0
+fi
+
+path=$1
+split_flag=$2
+
+
+
+temp_find_file="TEMP_FIND_FILE.txt"
+temp_split_count="TEMP_ROW_SPLIT_COUNT.txt"
+RESULT_FILE="$path/RESULT.txt"
+
+##truncate --size 0 $RESULT_FILE
+
+check_split(){
+        valid_rows=0
+        rows=2
+        base_file=""
+        file_name_count=$1
+        base_count=`head -n 1 $file_name_count`
+        echo "base_count=$base_count"
+        cnts=`cat $file_name_count | sed -n '2,$p'`
+        cnt_continue=0
+        for cnt in $cnts
+        do
+                if [[ $cnt -ge base_count ]];then
+                        ##for debug##
+                        ##echo "$base_file , row=$rows , cnt=$cnt [ >= $base_count] , true"
+                        valid_rows=$((valid_rows + 1 ))
+                else
+                        ##for debug##
+                        ##echo "$base_file , row=$rows , cnt=$cnt [ < $base_count] , false"
+                        cnt_continue=$((cnt_continue + cnt))
+                        if [[ $cnt_continue -ge $base_count ]];then
+                                ##for debug##
+                                ##echo "$base_file , row=$rows , cnt=$cnt , cnt_continue=$cnt_continue [ >= $base_count] , true"
+                                cnt_continue=0
+                                valid_rows=$((valid_rows + 1 ))
+                        fi
+                        
+                fi 
+                rows=$((rows+1))
+        done
+        echo "valid_rows=$valid_rows"
+}
+
+
+
+###查找文件夹中的文件
+find $path -name '*_counts.csv' |xargs rm -f
+find $path -name '*.csv' > $temp_find_file
+
+
+
+for file_name in `cat $temp_find_file`
+do
+##      echo "-->$file_name"
+        dirpath=`dirname $file_name`
+        last_name=`echo $dirpath |awk -F '[/]' '{print $NF}'`
+        result_file="${dirpath}/${last_name}_counts.csv"        
+        if [ ! -f $result_file ];then
+                echo "file_name , total_rows , valid_rows" > $result_file
+        fi
+        cat $file_name | awk -F\\$split_flag '{c=NF-1;print c}' > $temp_split_count
+        check_split $temp_split_count
+        total_rows=`sed -n '$=' $file_name`
+        total_rows=$((total_rows - 1 ))
+        echo "$file_name , $total_rows , $valid_rows" >> $result_file
+done
